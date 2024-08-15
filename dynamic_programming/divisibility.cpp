@@ -13,7 +13,7 @@ example, take the sequence: 17, 5, -21, 15. There are eight possible expressions
 17 - 5 + -21 - 15 = -24
 17 - 5 - -21 + 15 = 48
 17 - 5 - -21 - 15 = 18
-
+    
 We call the sequence of integers divisible by K if + or - operators can be placed between integers
 in the sequence in such way that resulting value is divisible by K. In the above example, the sequence
 is divisible by 7 (17+5+-21-15=-14) but is not divisible by 5.
@@ -43,58 +43,34 @@ Divisible
 Not divisible
  */
 #include <iostream>
-#include <vector>
 #include <cstring> 
 
 using namespace std;
 
-bool isDivisible(int N, int K, const vector<int>& sequence) {
-    bool dp[K];
-    memset(dp, false, sizeof(dp));
-    
-    dp[(sequence[0] % K + K) % K] = true;
-    
-    for (int i = 1; i < N; ++i) {
-        bool newDp[K];
-        memset(newDp, false, sizeof(newDp));
-        
-        for (int r = 0; r < K; ++r) {
-            if (dp[r]) {
-                newDp[(r + sequence[i]) % K] = true;
-                newDp[(r - sequence[i] + K) % K] = true;
+int main() {
+    int m;
+    cin >> m;
+
+    while(m--) {
+        int n, k, x;
+        int dp[10005][105] = {0};
+        cin >> n >> k;
+        cin >> x;
+        int i, j = 1;
+        n--;
+        dp[1][(x + 10000 * k) % k] = 1;
+        while(n--){
+            j++;
+            cin >> x;
+            for(i = 0; i < 101; i++){
+                if(dp[j - 1][i] == 1){
+                    dp[j][(i + x + 10000 * k) % k] = 1;
+                    dp[j][(i - x + 10000 * k) % k] = 1;
+                }
             }
         }
-        memcpy(dp, newDp, sizeof(dp));
+        if(dp[j][0] == 1) cout << "Divisible" << endl;
+        else cout << "Not divisible" << endl;
     }
-    
-    return dp[0];
-}
-
-int main() {
-    int M;
-    cin >> M;
-    vector<string> results;
-    
-    while (M--) {
-        int N, K;
-        cin >> N >> K;
-        vector<int> sequence(N);
-        
-        for (int i = 0; i < N; ++i) {
-            cin >> sequence[i];
-        }
-        
-        if (isDivisible(N, K, sequence)) {
-            results.push_back("Divisible");
-        } else {
-            results.push_back("Not divisible");
-        }
-    }
-    
-    for (const string& result : results) {
-        cout << result << endl;
-    }
-    
     return 0;
 }
-
